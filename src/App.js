@@ -1,9 +1,7 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
   RouterProvider,
-  Route,
 } from "react-router-dom";
 import './App.css';
 import {Navbar} from './components';
@@ -14,15 +12,14 @@ import {SignUp} from './../src/components/Auth';
 import {SignIn} from './../src/components/Auth';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {About} from './components/Layout/About';
-import { Provider } from 'react-redux';
-import store from './store';
+import ProtectRoute from "./ProtectRoute";
 
 function App() {
   const theme = createTheme();
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <><Navbar /><Dashboard /></>,
+      element: <><ProtectRoute><Navbar /><Dashboard /></ProtectRoute></>,
     },
     {
       path: "/project:id",
@@ -43,13 +40,11 @@ function App() {
     {
       path:"/about",
       element:<><Navbar /><About /></>
-    }
+    },
   ]);
   return (
     <div className="App">
-      <Provider store={store}>
       <RouterProvider router={router} />
-      </Provider>
     </div>
   );
 }
