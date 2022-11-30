@@ -3,17 +3,19 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
 import {
-  createBrowserRouter,
-  RouterProvider,
-  Route,
-} from "react-router-dom";
+  ReactReduxFirebaseProvider,
+} from 'react-redux-firebase'
+import store, {rrfProps} from './../src/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
     <App />
-  </React.StrictMode>
+    </ReactReduxFirebaseProvider>
+    </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

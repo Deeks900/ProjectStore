@@ -14,13 +14,26 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import StoreMallDirectoryIcon from '@mui/icons-material/StoreMallDirectory';
 import { NavLink } from "react-router-dom";
+import {signOut} from './../../store/actions';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useFirebase } from "react-redux-firebase";
 
 const pages = [{name:"Submit Project", url:'/create'}, {name:"About", url:'/about'}];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function Navbar() {
+  const firebase = useFirebase();
+const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleSignOut = async()=>{
+    console.log("I am handle sign out");
+    let result = await signOut()(firebase, dispatch);
+    console.log("I am the result after signing out");
+  }
+  const settings = [{name:'Logout', functionCall:handleSignOut}];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -147,8 +160,8 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.name} onClick={handleCloseUserMenu}>
+                  <Typography onClick={setting.functionCall} textAlign="center">{setting.name}</Typography>
                 </MenuItem>
               ))}
             </Menu>
