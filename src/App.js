@@ -12,6 +12,32 @@ import {SignUp} from './../src/components/Auth';
 import {SignIn} from './../src/components/Auth';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {About} from './components/Layout/About';
+import { isLoaded } from "react-redux-firebase";
+import { isEmpty } from "lodash";
+import Spinner from "./helpers/Spinner";
+import { useSelector } from "react-redux";
+
+const AuthIsLoaded = ({children})=>{
+  const profile = useSelector((state)=>state.firebaseReducer.profile)  
+  console.log("The profile is", profile);
+
+  //case for not logged in user
+  if(
+    isLoaded(profile) &&
+    isEmpty(profile) 
+  ){
+    return children
+  }
+
+  //case for logged in user
+  if(
+    isLoaded(profile) &&
+    !isEmpty(profile) 
+  )
+  return children
+
+    return <Spinner />
+}
 
 function App() {
   const theme = createTheme();
@@ -44,7 +70,9 @@ function App() {
   ]);
   return (
     <div className="App">
+      <AuthIsLoaded>
       <RouterProvider router={router} />
+      </AuthIsLoaded>
     </div>
   );
 }
