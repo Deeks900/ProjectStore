@@ -11,6 +11,7 @@ export const signUp = (userData)=>{
             let username = "hello"
             //Here after comma you have to pass the values you want to store in firestore.
             let user = await firebase.createUser({email, password}, {email});
+            await firebase.logout();
             dispatch({ type: actions.SIGN_UP_SUCCESS });
         }
         catch(e){

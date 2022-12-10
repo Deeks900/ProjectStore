@@ -17,9 +17,10 @@ import Button from '@mui/material/Button';
 import { useDispatch, useSelector } from "react-redux";
 import { useFirebase } from "react-redux-firebase";
 import CardActions from '@mui/material/CardActions';
-import { Link } from 'react-router-dom';
+import { Link, redirect, } from 'react-router-dom';
 import {img5, img6} from './../../assets';
 import {signIn, signInWithGoogle, signInWithGithub} from "./../../store/actions";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   one: {
@@ -27,24 +28,45 @@ const useStyles = makeStyles((theme) => ({
       display:'none'
     },
     [theme.breakpoints.between('sm', 'md')]:{
-      width:'40vh',
-      height:'40vh',
-      marginTop:'24vh'
+      width:'65vh',
+      height:'70vh',
+      marginTop:'10vh'
     },
     [theme.breakpoints.between('md', 'lg')]: {
-      width:'50vh',
-      height:'60vh',
+      width:'80vh',
+      height:'70vh',
       marginTop:'16vh'
     },
     [theme.breakpoints.between('lg', 'xl')]:{
-      height:'90vh',
-      width:'90vh'
+      height:'75vh',
+      width:'65vh',
+      marginTop:'8vh'
+    },
+    [theme.breakpoints.up('xl')]:{
+      height:'100vh',
+      width:'70vh'
     }
-    
   },
+
+  two:{
+    [theme.breakpoints.between('md', 'lg')]: {
+      marginTop:'10vh'
+    },
+    [theme.breakpoints.between('lg', 'xl')]:{
+      marginTop:'8vh',
+      maxWidth:600,
+    },
+    [theme.breakpoints.up('xl')]:{
+      marginTop:'10vh'
+    },
+    [theme.breakpoints.between('sm', 'md')]:{
+      marginTop:'10vh'
+    }
+  }
 }));
 
 export default function SignIn(props) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -53,11 +75,12 @@ export default function SignIn(props) {
   const dispatch = useDispatch();
   const [msgColor, setMsgColor] = useState("");
   const emailVerified = useSelector((state)=>state.firebaseReducer.auth.emailVerified);
-  const errorProp = useSelector((state)=>state.authReducer.error);
-  const loadingProp = useSelector((state)=>state.authReducer.loading);
+  const errorProp = useSelector((state)=>state.signInReducer.error);
+  const loadingProp = useSelector((state)=>state.signInReducer.loading);
   const [error, seterror] = useState(null);
   const [loading, setloading] = useState(false);
   const [success, setsuccess] = useState(null);
+  const userLoggedIn = useSelector((state)=>state.firebaseReducer.auth.uid);
 
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -66,7 +89,14 @@ export default function SignIn(props) {
     textAlign: 'center',
     color: theme.palette.text.secondary,
   }));
-  
+ 
+  //If user is logged in then redirect the user to home page.
+  useEffect(()=>{
+    if(userLoggedIn){
+      navigate('/');
+    }
+  }, [userLoggedIn]);
+
   //sign in is successful
   useEffect(() => {
     if (errorProp === false && loadingProp === false) {
@@ -108,6 +138,8 @@ export default function SignIn(props) {
     }, 3000)
 }
 
+
+
   const handleLogin = async()=>{
     console.log("I am the handle Login function")
     setMsg("");
@@ -124,7 +156,6 @@ export default function SignIn(props) {
   }
 
   const classes = useStyles();
-
  
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -132,12 +163,12 @@ export default function SignIn(props) {
         
         {/* Left side start */}
         <Grid item xs={0} sm={5} md={5} lg={5} sx={{my:3}}> 
-          <img className={classes.one} {...props} src={img2}/>
+          <img className={classes.one} src={img2}/>
         </Grid>
         {/* Left side ends */}
 
         {/* right side starts */}
-        <Grid item xs={11} sm={5} md={6} lg={6} sx={{my:7}}>
+        <Grid className={classes.two} item xs={11} sm={5} md={6} lg={6} sx={{my:7}}>
         <Card variant="outlined">
           <h3 style={{fontFamily:'Berkshire', fontSize:25}}>Login</h3>
         <CardContent >
@@ -175,7 +206,7 @@ export default function SignIn(props) {
           }}
         />
         <div style={{display:'flex', justifyContent:'flex-end', marginTop:'-10px'}}>
-        <Typography style={{color:'black', fontFamily:'Berkshire', fontSize:16}}> <Link style={{textDecoration:'none', color:'#1C8D73'}}to={'/signup'}>Forgot Your Password?</Link></Typography>
+        <Typography style={{color:'black', fontFamily:'Berkshire', fontSize:16}}> <Link style={{textDecoration:'none', color:'#1C8D73'}}to={'/forgotpassword'}>Forgot Your Password?</Link></Typography>
         </div>
         </CardContent>
 
@@ -210,3 +241,4 @@ export default function SignIn(props) {
     </Box>
   );
 }
+

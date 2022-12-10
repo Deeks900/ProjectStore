@@ -19,6 +19,7 @@ import { useFirebase } from "react-redux-firebase";
 import { useLocation } from "react-router-dom";
 import {signInWithGoogle, signInWithGithub} from "./../../store/actions";
 import { makeStyles } from '@mui/styles';
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme)=>({
  
@@ -43,11 +44,12 @@ const useStyles = makeStyles((theme)=>({
 }))
 
 function SignUp() {
+  const navigate = useNavigate();
   const location = useLocation();
     const firebase = useFirebase();
     const dispatch = useDispatch();
-    const errorProp = useSelector((state)=>state.authReducer.error);
-    const loadingProp = useSelector(state=>state.authReducer.loading);
+    const errorProp = useSelector((state)=>state.signUpReducer.error);
+    const loadingProp = useSelector(state=>state.signUpReducer.loading);
     const emailVerify = useSelector((state)=>state.firebaseReducer.auth.emailVerified);
     const classes = useStyles();
     const [firstName, setFirstName] = useState('');
@@ -57,6 +59,8 @@ function SignUp() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const userLoggedIn = useSelector((state)=>state.firebaseReducer.auth.uid);
+    const emailVerified = useSelector((state)=>state.firebaseReducer.auth.emailVerified);
 
     //These Two are for showing errors due to validation in sign up form 
     const [msg, setMsg] = useState('');
@@ -66,6 +70,13 @@ function SignUp() {
     //These errors and success are for the messages received on sending a sign up call to firebase.
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+
+    //If user is logged in then redirect the user to home page.
+    useEffect(()=>{
+      if(userLoggedIn && emailVerified){
+        navigate('/');
+      }
+    }, [userLoggedIn, emailVerified]);
 
   //useSelector is subscribed to the store so as soon as errorProp changes we need to change our error.  
   useEffect(() => {

@@ -8,7 +8,7 @@ import {Navbar} from './components';
 import Dashboard from './components/Dashboard/Dashboard';
 import ProjectDetails from "./components/Project/ProjectDetails";
 import { CreateProject } from "./components/Project/CreateProject";
-import {SignUp} from './../src/components/Auth';
+import {ForgotPassword, SignUp} from './../src/components/Auth';
 import {SignIn} from './../src/components/Auth';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {About} from './components/Layout/About';
@@ -16,6 +16,7 @@ import { isLoaded } from "react-redux-firebase";
 import { isEmpty } from "lodash";
 import Spinner from "./helpers/Spinner";
 import { useSelector } from "react-redux";
+import ProtectRoute from "./routeHelpers/ProtectRoute";
 
 const AuthIsLoaded = ({children})=>{
   const profile = useSelector((state)=>state.firebaseReducer.profile)  
@@ -45,11 +46,11 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <><Navbar /><Dashboard /></>,
+      element: <><ProtectRoute><Navbar /><Dashboard /></ProtectRoute></>,
     },
     {
       path: "/project:id",
-      element: <><Navbar /><ProjectDetails /></>
+      element: <><ProtectRoute><Navbar /><ProjectDetails /></ProtectRoute></>
     },
     {
       path:"/signup",
@@ -60,8 +61,12 @@ function App() {
       element:<ThemeProvider theme={theme}><><Navbar /><SignIn /></></ThemeProvider>
     },
     {
+      path:"/forgotpassword",
+      element:<ThemeProvider theme={theme}><><Navbar /><ForgotPassword /></></ThemeProvider>
+    },
+    {
       path:"/create",
-      element:<ThemeProvider theme={theme}><><Navbar /><CreateProject /></></ThemeProvider>
+      element:<ThemeProvider theme={theme}><><ProtectRoute><Navbar /><CreateProject /></ProtectRoute></></ThemeProvider>
     },
     {
       path:"/about",
