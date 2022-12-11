@@ -1,19 +1,18 @@
 import React from 'react'
-import authReducer from './authReducer';
 import profileReducer from './profileReducer';
-import signInReducer from './signInReducer';
-import signUpReducer from './signUpReducer';
+import authReducer from './authReducer';
 import { combineReducers } from 'redux';
 import {
     firebaseReducer
 } from 'react-redux-firebase';
 
 const rootReducer = combineReducers({
-    authReducer: authReducer,
+    // forgotPasswordReducer: forgotPasswordReducer,
     profileReducer: profileReducer,
     firebaseReducer: firebaseReducer,
-    signInReducer: signInReducer,
-    signUpReducer: signUpReducer
+    authReducer:authReducer,
+    // signInReducer: signInReducer,
+    // signUpReducer: signUpReducer
 })
 
 export default rootReducer

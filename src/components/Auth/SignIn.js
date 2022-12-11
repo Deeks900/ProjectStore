@@ -19,7 +19,7 @@ import { useFirebase } from "react-redux-firebase";
 import CardActions from '@mui/material/CardActions';
 import { Link, redirect, } from 'react-router-dom';
 import {img5, img6} from './../../assets';
-import {signIn, signInWithGoogle, signInWithGithub} from "./../../store/actions";
+import {signIn, signInWithGoogle, signInWithGithub,clearAuthError} from "./../../store/actions";
 import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -75,8 +75,8 @@ export default function SignIn(props) {
   const dispatch = useDispatch();
   const [msgColor, setMsgColor] = useState("");
   const emailVerified = useSelector((state)=>state.firebaseReducer.auth.emailVerified);
-  const errorProp = useSelector((state)=>state.signInReducer.error);
-  const loadingProp = useSelector((state)=>state.signInReducer.loading);
+  const errorProp = useSelector((state)=>state.authReducer.error);
+  const loadingProp = useSelector((state)=>state.authReducer.loading);
   const [error, seterror] = useState(null);
   const [loading, setloading] = useState(false);
   const [success, setsuccess] = useState(null);
@@ -104,7 +104,6 @@ export default function SignIn(props) {
       setMsg('Login Successful!')
       setMsgColor("#6EC72D");
       setsuccess(true);
-     
     } else {
       setsuccess(false);
     }
@@ -154,6 +153,12 @@ export default function SignIn(props) {
       return;
   }
   }
+
+  useEffect(()=>{
+    console.log("I am the useEffect 1")
+    clearAuthError()(dispatch);
+    setMsg("")
+  }, []);
 
   const classes = useStyles();
  
@@ -226,7 +231,7 @@ export default function SignIn(props) {
       <div style={{fontFamily:'Berkshire', color:'black', fontSize:18, cursor:'pointer'}}>Sign In with Google</div>
       <img src={img5} style={{width:40, height:40}}/>
       </Item>
-    <Item style={{display:'flex', flexDirection:'row', padding:4, paddingLeft:4, paddingRight:7, alignItems:'center'}} sx={{marginTop: 2}}>
+    <Item onClick={()=>signInWithGithub()(dispatch, firebase)} style={{display:'flex', flexDirection:'row', padding:4, paddingLeft:4, paddingRight:7, alignItems:'center'}} sx={{marginTop: 2}}>
       <div style={{fontFamily:'Berkshire', color:'black', fontSize:18, cursor:'pointer'}}>Sign In with Github</div>
       <img src={img6} style={{width:30, height:30, paddingLeft:5}}/>
       </Item>

@@ -3,5 +3,8 @@ export {
     signInWithGoogle,
     signInWithGithub,
     signIn,
-    signOut
+    signOut,
+    sendPasswordResetEmail,
+    clearAuthError,
+    deleteAccount
 } from "./authActions";

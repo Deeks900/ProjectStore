@@ -17,7 +17,7 @@ import { signUp } from '../../store/actions';
 import { useDispatch, useSelector } from "react-redux";
 import { useFirebase } from "react-redux-firebase";
 import { useLocation } from "react-router-dom";
-import {signInWithGoogle, signInWithGithub} from "./../../store/actions";
+import {signInWithGoogle, signInWithGithub, clearAuthError} from "./../../store/actions";
 import { makeStyles } from '@mui/styles';
 import { useNavigate } from "react-router-dom";
 
@@ -48,8 +48,8 @@ function SignUp() {
   const location = useLocation();
     const firebase = useFirebase();
     const dispatch = useDispatch();
-    const errorProp = useSelector((state)=>state.signUpReducer.error);
-    const loadingProp = useSelector(state=>state.signUpReducer.loading);
+    const errorProp = useSelector((state)=>state.authReducer.error);
+    const loadingProp = useSelector(state=>state.authReducer.loading);
     const emailVerify = useSelector((state)=>state.firebaseReducer.auth.emailVerified);
     const classes = useStyles();
     const [firstName, setFirstName] = useState('');
@@ -149,6 +149,12 @@ function SignUp() {
         }
     }
 
+    useEffect(()=>{
+      console.log("I am the useEffect 1")
+      clearAuthError()(dispatch);
+      setMsg("")
+    }, []);
+  
   return (
     <Grid container spacing={2} className={classes.one} style={{paddingLeft:40, paddingRight:40, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
     

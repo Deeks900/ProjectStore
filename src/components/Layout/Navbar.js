@@ -14,15 +14,16 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import StoreMallDirectoryIcon from '@mui/icons-material/StoreMallDirectory';
 import { NavLink } from "react-router-dom";
-import {signOut} from './../../store/actions';
+import {signOut, deleteAccount} from './../../store/actions';
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useFirebase } from "react-redux-firebase";
+import { useFirebase, useFirestore } from "react-redux-firebase";
 
 const pages = [{name:"Submit Project", url:'/create'}, {name:"About", url:'/about'}];
 
 function Navbar() {
   const firebase = useFirebase();
+  const firestore = useFirestore();
 const dispatch = useDispatch();
   const navigate = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -33,7 +34,13 @@ const dispatch = useDispatch();
     let result = await signOut()(firebase, dispatch);
     console.log("I am the result after signing out");
   }
-  const settings = [{name:'Logout', functionCall:handleSignOut}];
+
+  const handleDelete = async()=>{
+    console.log("I ma handle deltee");
+    let result = await deleteAccount()(firebase, firestore, dispatch);
+  }
+
+  const settings = [{name:'Logout', functionCall:handleSignOut}, {name:"Delete Account", functionCall:handleDelete}];
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);

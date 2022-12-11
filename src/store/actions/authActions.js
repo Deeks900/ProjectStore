@@ -1,6 +1,11 @@
 import { async } from '@firebase/util';
 import * as actions from './actionTypes';
 import _ from "lodash";
+import { getAuth, deleteUser } from "firebase/auth";
+import { doc, deleteDoc } from "firebase/firestore";
+import { fetchSignInMethodsForEmail } from 'firebase/auth';
+
+
 
 //Sign Up Function
 export const signUp = (userData)=>{
@@ -89,6 +94,47 @@ export const signOut = ()=>{
       };
 }
 
-export const clearAuthError = () => async (dispatch) => {
+//delete user function 
+export const deleteAccount = ()=>{
+    return async(firebase, firestore, dispatch)=>{
+        const auth = getAuth();
+        const user = auth.currentUser;
+        try{
+            dispatch({type:actions.CLEAR_AUTH_PROFILE_STATE});
+            console.log("The uid is", user.uid);
+            await deleteUser(user);
+            await firestore.collection("users").doc(user.uid).delete();
+        }
+        catch(e){
+            console.log(e.message);
+        }
+    }
+}
+
+export const clearAuthError = () => (dispatch) => {
     dispatch({ type: actions.CLEAR_AUTH_PROFILE_STATE });
-  }; 
+}; 
+
+//Forgot Password Function
+export const sendPasswordResetEmail = (email) => async (firebase, dispatch) => {
+    const auth = getAuth();
+    const logInMethod = await fetchSignInMethodsForEmail(auth, email); 
+    console.log("The email is", logInMethod);
+    if(logInMethod == 'password'){
+        try {
+            dispatch({ type: actions.SEND_RESET_EMAIL_START });
+            const result = await firebase.resetPassword(email);
+            console.log(`The reset password work is done, ${result}`);
+            dispatch({ type: actions.SEND_RESET_EMAIL_SUCCESS });
+          } catch (e) {
+              console.log("The forgot password error is", e.message);
+            dispatch({ type: actions.SEND_RESET_EMAIL_FAIL, payload: e });
+          }
+    }
+    else{
+        const e = `You have signed up using ${logInMethod}.Sorry we can't change your password!`
+        dispatch({ type: actions.SEND_RESET_EMAIL_FAIL, payload: e});
+    }
+    
+};
+  
